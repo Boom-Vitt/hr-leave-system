@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบใบลาออนไลน์ | BoomBigNose</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #3b82f6;
+      --primary-dark: #1e3a8a;
+      --accent: #0ea5e9;
+      --success: #10b981;
+      --error: #ef4444;
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--accent) 100%);
+      color: white;
+      padding: 28px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -20%;
+      width: 140%; height: 200%;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.08) 0%, transparent 70%);
+    }
+    .header-logo { font-size: 2rem; margin-bottom: 6px; }
+    header h1 { font-size: 1.6rem; font-weight: 700; }
+    header p { font-size: 0.92rem; opacity: 0.85; margin-top: 6px; }
+
+    /* CARD */
+    .container { max-width: 760px; margin: -52px auto 40px; padding: 0 16px; position: relative; z-index: 10; }
+    .card { background: var(--card); border-radius: var(--radius); box-shadow: 0 4px 32px rgba(30,64,175,.10), 0 1.5px 8px rgba(0,0,0,.06); overflow: hidden; }
+    .card-header {
+      background: linear-gradient(90deg, #f8faff, #eef2ff);
+      border-bottom: 1.5px solid var(--border);
+      padding: 20px 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .card-header-icon { width: 44px; height: 44px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+    .card-header h2 { font-size: 1.15rem; font-weight: 700; color: var(--primary-dark); }
+    .card-header p { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+
+    /* FORM */
+    form { padding: 28px; }
+    .section-title {
+      font-size: 0.78rem; font-weight: 700; color: var(--primary);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin: 0 0 16px; padding-bottom: 8px;
+      border-bottom: 2px solid #e0e7ff;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-title::before { content: ''; width: 4px; height: 14px; background: var(--primary); border-radius: 2px; }
+    .form-row { display: grid; gap: 16px; margin-bottom: 20px; }
+    .form-row.col-2 { grid-template-columns: 1fr 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+    .form-group label .req { color: var(--error); }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 0.92rem;
+      color: var(--text);
+      background: white;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+      width: 100%;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .form-group select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px;
+    }
+    .input-hint { font-size: 0.78rem; color: var(--muted); }
+
+    /* LEAVE TYPE GRID */
+    .leave-type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .leave-type-option { display: none; }
+    .leave-type-option + label {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 12px 8px; border: 1.5px solid var(--border); border-radius: 10px;
+      cursor: pointer; transition: all .18s; background: white;
+      font-size: 0.82rem; font-weight: 600; color: var(--muted); text-align: center;
+    }
+    .leave-type-option + label .emoji { font-size: 1.6rem; }
+    .leave-type-option:checked + label { border-color: var(--primary); background: #eff6ff; color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,.12); }
+    .leave-type-option + label:hover { border-color: var(--primary-light); background: #f8faff; }
+
+    /* DAYS BADGE */
+    .days-badge {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+      border: 1.5px solid #bfdbfe; border-radius: 10px;
+      padding: 14px; margin-bottom: 20px;
+    }
+    .days-badge .count { font-size: 2.2rem; font-weight: 700; color: var(--primary); line-height: 1; }
+    .days-badge .label { font-size: 0.88rem; color: var(--muted); }
+
+    .divider { border: none; border-top: 1.5px solid var(--border); margin: 24px 0; }
+
+    /* BUTTON */
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+    .btn {
+      padding: 12px 28px; border-radius: 9px;
+      font-family: 'Sarabun', sans-serif; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; border: none; transition: all .18s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-outline { background: white; border: 1.5px solid var(--border); color: var(--muted); }
+    .btn-outline:hover { border-color: var(--primary-light); color: var(--primary); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white; box-shadow: 0 4px 14px rgba(30,64,175,.25);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(30,64,175,.35); }
+    .btn-primary:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,.55); backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center; }
+    .modal-overlay.show { display: flex; }
+    .modal { background: white; border-radius: 16px; padding: 36px 32px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.18); animation: modalIn .25s ease; }
+    @keyframes modalIn { from { transform: scale(.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-icon { font-size: 3.5rem; margin-bottom: 16px; }
+    .modal h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; }
+    .modal p { font-size: 0.92rem; color: var(--muted); line-height: 1.6; }
+    .modal .ref { font-size: 0.78rem; color: var(--muted); margin-top: 8px; }
+    .modal .ref b { color: var(--primary); }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1e293b; color: white; padding: 12px 24px; border-radius: 50px;
+      font-size: 0.88rem; font-weight: 600; opacity: 0; transition: all .3s; z-index: 2000;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* SPINNER */
+    .spinner { display: inline-block; width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,.4); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* VALIDATION */
+    .form-group.error input, .form-group.error select, .form-group.error textarea { border-color: var(--error); box-shadow: 0 0 0 3px rgba(239,68,68,.1); }
+    .error-msg { font-size: 0.78rem; color: var(--error); display: none; }
+    .form-group.error .error-msg { display: block; }
+
+    /* FOOTER */
+    footer { text-align: center; padding: 24px; font-size: 0.8rem; color: var(--muted); }
+
+    @media (max-width: 600px) {
+      .form-row.col-2 { grid-template-columns: 1fr; }
+      .leave-type-grid { grid-template-columns: repeat(2, 1fr); }
+      form { padding: 20px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">🏢</div>
+  <h1>ระบบใบลาออนไลน์</h1>
+  <p>กรุณากรอกข้อมูลให้ครบถ้วน · ระบบจะบันทึกอัตโนมัติ</p>
+</header>
+
+<div class="container">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-header-icon">📋</div>
+      <div>
+        <h2>แบบฟอร์มขอลา</h2>
+        <p>Leave Request Form — กรุณากรอกทุกช่องที่มีเครื่องหมาย *</p>
+      </div>
+    </div>
+
+    <form id="leaveForm" novalidate>
+
+      <!-- ข้อมูลพนักงาน -->
+      <div class="section-title">ข้อมูลพนักงาน</div>
+      <div class="form-row col-2">
+        <div class="form-group" id="grp-fullName">
+          <label>ชื่อ-นามสกุล <span class="req">*</span></label>
+          <input type="text" id="fullName" placeholder="เช่น สมชาย ใจดี" />
+          <span class="error-msg">กรุณากรอกชื่อ-นามสกุล</span>
+        </div>
+        <div class="form-group" id="grp-department">
+          <label>แผนก <span class="req">*</span></label>
+          <input type="text" id="department" placeholder="เช่น บัญชี, HR, IT" />
+          <span class="error-msg">กรุณากรอกชื่อแผนก</span>
+        </div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group">
+          <label>รหัสพนักงาน</label>
+          <input type="text" id="employeeId" placeholder="EMP-001 (ถ้ามี)" />
+        </div>
+        <div class="form-group">
+          <label>ตำแหน่ง</label>
+          <input type="text" id="position" placeholder="เช่น เจ้าหน้าที่บัญชี" />
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- ประเภทการลา -->
+      <div class="section-title">ประเภทการลา <span style="color:var(--error);font-size:1rem;">*</span></div>
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="leave-type-grid">
+          <input class="leave-type-option" type="radio" name="leaveType" id="lt-sick" value="ลาป่วย" />
+          <label for="lt-sick"><span class="emoji">🤒</span>ลาป่วย</label>
+
+          <input class="leave-type-option" type="radio" name="leaveType" id="lt-personal" value="ลากิจ" />
+          <label for="lt-personal"><span class="emoji">📁</span>ลากิจ</label>
+
+          <input class="leave-type-option" type="radio" name="leaveType" id="lt-vacation" value="ลาพักร้อน" />
+          <label for="lt-vacation"><span class="emoji">🏖️</span>ลาพักร้อน</label>
+
+          <input class="leave-type-option" type="radio" name="leaveType" id="lt-maternity" value="ลาคลอด" />
+          <label for="lt-maternity"><span class="emoji">🍼</span>ลาคลอด</label>
+
+          <input class="leave-type-option" type="radio" name="leaveType" id="lt-ordain" value="ลาอุปสมบท" />
+          <label for="lt-ordain"><span class="emoji">🙏</span>ลาอุปสมบท</label>
+
+          <input class="leave-type-option" type="radio" name="leaveType" id="lt-other" value="อื่นๆ" />
+          <label for="lt-other"><span class="emoji">📝</span>อื่นๆ</label>
+        </div>
+        <span class="error-msg" id="leaveType-error" style="display:none;">กรุณาเลือกประเภทการลา</span>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- วันที่ลา -->
+      <div class="section-title">ช่วงวันที่ลา</div>
+      <div class="form-row col-2">
+        <div class="form-group" id="grp-startDate">
+          <label>วันที่เริ่มลา <span class="req">*</span></label>
+          <input type="date" id="startDate" />
+          <span class="error-msg">กรุณาระบุวันที่เริ่มลา</span>
+        </div>
+        <div class="form-group" id="grp-endDate">
+          <label>วันที่สิ้นสุด <span class="req">*</span></label>
+          <input type="date" id="endDate" />
+          <span class="error-msg">กรุณาระบุวันที่สิ้นสุด</span>
+        </div>
+      </div>
+
+      <div class="days-badge">
+        <div class="count" id="daysCount">0</div>
+        <div>
+          <div style="font-weight:700; color:#1e40af; font-size:1rem;">วัน</div>
+          <div class="label" id="daysLabel">กรุณาเลือกวันที่</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group" id="grp-reason">
+          <label>เหตุผลการลา <span class="req">*</span></label>
+          <textarea id="reason" placeholder="อธิบายเหตุผลการลาโดยย่อ..."></textarea>
+          <span class="error-msg">กรุณาระบุเหตุผลการลา</span>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- ผู้อนุมัติ -->
+      <div class="section-title">ข้อมูลผู้อนุมัติ</div>
+      <div class="form-row col-2">
+        <div class="form-group" id="grp-approver">
+          <label>ชื่อผู้อนุมัติ / หัวหน้างาน <span class="req">*</span></label>
+          <input type="text" id="approver" placeholder="เช่น นายกิตติ วงษ์ใหญ่" />
+          <span class="error-msg">กรุณาระบุชื่อผู้อนุมัติ</span>
+        </div>
+        <div class="form-group">
+          <label>อีเมลผู้อนุมัติ (ถ้ามี)</label>
+          <input type="email" id="approverEmail" placeholder="boss@company.com" />
+          <span class="input-hint">สำหรับส่งแจ้งเตือนอัตโนมัติ</span>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" onclick="resetForm()">🔄 ล้างฟอร์ม</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span id="submitText">✉️ ส่งใบลา</span>
+          <span id="submitSpinner" class="spinner" style="display:none;"></span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<footer>&copy; 2025 BoomBigNose · ระบบใบลาออนไลน์ · ข้อมูลบันทึกใน Google Sheets อัตโนมัติ</footer>
+
+<!-- MODAL: SUCCESS -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="modal-icon">✅</div>
+    <h3 style="color:#10b981;">ส่งใบลาสำเร็จ!</h3>
+    <p>ใบลาของคุณถูกบันทึกเรียบร้อยแล้ว<br />กรุณารอการยืนยันจากหัวหน้างาน</p>
+    <p class="ref">หมายเลขอ้างอิง: <b id="refNumber"></b></p>
+    <button class="btn btn-primary" style="margin-top:20px; width:100%; justify-content:center;" onclick="document.getElementById('successModal').classList.remove('show'); resetForm();">✓ ตกลง</button>
+  </div>
+</div>
+
+<!-- MODAL: ERROR -->
+<div class="modal-overlay" id="errorModal">
+  <div class="modal">
+    <div class="modal-icon">❌</div>
+    <h3 style="color:#ef4444;">เกิดข้อผิดพลาด</h3>
+    <p id="errorMessage">ไม่สามารถส่งข้อมูลได้ กรุณาลองใหม่อีกครั้ง</p>
+    <button class="btn btn-outline" style="margin-top:20px; width:100%; justify-content:center;" onclick="document.getElementById('errorModal').classList.remove('show')">✕ ปิด</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // =========================================================
+  // ⚙️  CONFIG — ใส่ URL Apps Script ที่ Deploy แล้วตรงนี้
+  // =========================================================
+  const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+  // ตัวอย่าง: "https://script.google.com/macros/s/AKfycb.../exec"
+
+  // =========================================================
+  // UTILS
+  // =========================================================
+  const toast = (msg, ms = 3000) => {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), ms);
+  };
+
+  const genRef = () => {
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    return `LR-${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${Math.floor(Math.random()*9000+1000)}`;
+  };
+
+  // =========================================================
+  // DATE SETUP
+  // =========================================================
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('startDate').min = today;
+  document.getElementById('endDate').min = today;
+
+  function calcDays() {
+    const s = document.getElementById('startDate').value;
+    const e = document.getElementById('endDate').value;
+    if (!s || !e) { document.getElementById('daysCount').textContent = '0'; document.getElementById('daysLabel').textContent = 'กรุณาเลือกวันที่'; return 0; }
+    const start = new Date(s), end = new Date(e);
+    if (end < start) { document.getElementById('daysCount').textContent = '⚠️'; document.getElementById('daysLabel').textContent = 'วันสิ้นสุดต้องมาหลังวันเริ่ม'; return -1; }
+    let count = 0, cur = new Date(start);
+    while (cur <= end) { const day = cur.getDay(); if (day !== 0 && day !== 6) count++; cur.setDate(cur.getDate()+1); }
+    document.getElementById('daysCount').textContent = count;
+    document.getElementById('daysLabel').textContent = count > 0 ? 'วันทำการ (ไม่นับ เสาร์-อาทิตย์)' : 'ไม่มีวันทำการในช่วงนี้';
+    return count;
+  }
+
+  document.getElementById('startDate').addEventListener('change', function() {
+    document.getElementById('endDate').min = this.value;
+    if (document.getElementById('endDate').value && document.getElementById('endDate').value < this.value)
+      document.getElementById('endDate').value = this.value;
+    calcDays();
+  });
+  document.getElementById('endDate').addEventListener('change', calcDays);
+
+  // =========================================================
+  // VALIDATION
+  // =========================================================
+  function validateRequired(id) {
+    const el = document.getElementById(id);
+    const grp = document.getElementById('grp-' + id);
+    if (!grp) return true;
+    if (!el || !el.value.trim()) { grp.classList.add('error'); return false; }
+    grp.classList.remove('error'); return true;
+  }
+
+  ['fullName','department','startDate','endDate','reason','approver'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => { const g = document.getElementById('grp-'+id); if (g) g.classList.remove('error'); });
+  });
+  document.querySelectorAll('input[name="leaveType"]').forEach(r =>
+    r.addEventListener('change', () => { document.getElementById('leaveType-error').style.display = 'none'; })
+  );
+
+  // =========================================================
+  // SUBMIT
+  // =========================================================
+  document.getElementById('leaveForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    let ok = true;
+    ['fullName','department','startDate','endDate','reason','approver'].forEach(id => { if (!validateRequired(id)) ok = false; });
+    const lt = document.querySelector('input[name="leaveType"]:checked');
+    if (!lt) { document.getElementById('leaveType-error').style.display = 'block'; ok = false; }
+
+    if (!ok) { toast('⚠️ กรุณากรอกข้อมูลให้ครบถ้วน'); return; }
+    const days = calcDays();
+    if (days <= 0) { toast('⚠️ กรุณาตรวจสอบวันที่ลา'); return; }
+    if (APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') { toast('⚙️ กรุณาตั้งค่า Apps Script URL ก่อน (ดู README.md)'); return; }
+
+    const refNo = genRef();
+    const payload = {
+      refNumber: refNo,
+      fullName: document.getElementById('fullName').value.trim(),
+      employeeId: document.getElementById('employeeId').value.trim(),
+      department: document.getElementById('department').value.trim(),
+      position: document.getElementById('position').value.trim(),
+      leaveType: lt.value,
+      startDate: document.getElementById('startDate').value,
+      endDate: document.getElementById('endDate').value,
+      days,
+      reason: document.getElementById('reason').value.trim(),
+      approver: document.getElementById('approver').value.trim(),
+      approverEmail: document.getElementById('approverEmail').value.trim(),
+      submittedAt: new Date().toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' })
+    };
+
+    // Loading
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    document.getElementById('submitText').style.display = 'none';
+    document.getElementById('submitSpinner').style.display = 'inline-block';
+
+    try {
+      // mode: no-cors เพราะ Apps Script ไม่ส่ง CORS header ถูกต้อง → response จะเป็น opaque
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      // opaque response = success (ถ้า throw แสดงว่า network error)
+      document.getElementById('refNumber').textContent = refNo;
+      document.getElementById('successModal').classList.add('show');
+    } catch (err) {
+      document.getElementById('errorMessage').textContent = 'เชื่อมต่อไม่ได้: ' + err.message;
+      document.getElementById('errorModal').classList.add('show');
+    } finally {
+      btn.disabled = false;
+      document.getElementById('submitText').style.display = 'inline';
+      document.getElementById('submitSpinner').style.display = 'none';
+    }
+  });
+
+  // =========================================================
+  // RESET
+  // =========================================================
+  function resetForm() {
+    document.getElementById('leaveForm').reset();
+    document.getElementById('daysCount').textContent = '0';
+    document.getElementById('daysLabel').textContent = 'กรุณาเลือกวันที่';
+    document.querySelectorAll('.form-group').forEach(g => g.classList.remove('error'));
+    document.getElementById('leaveType-error').style.display = 'none';
+    toast('🔄 ล้างฟอร์มเรียบร้อย');
+  }
+</script>
+</body>
+</html>
